@@ -1,0 +1,799 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mandatos Informales y Presente Perfecto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Merriweather:wght@400;700&display=swap');
+
+  :root {
+    --navy: #1a3a5c;
+    --blue-mid: #2e6da4;
+    --blue-light: #5b9bd5;
+    --blue-pale: #dce9f5;
+    --green-dark: #2d6a3f;
+    --green-mid: #4a9b62;
+    --green-light: #c8e6d0;
+    --gold: #c89a2e;
+    --gold-light: #f5e8c0;
+    --red: #c0392b;
+    --white: #ffffff;
+    --off-white: #f7f9fc;
+    --gray-light: #e8edf3;
+    --text: #1c2b3a;
+    --correct: #2d6a3f;
+    --incorrect: #c0392b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .site-header {
+    background: var(--navy);
+    color: white;
+    text-align: center;
+    padding: 22px 20px 18px;
+    border-bottom: 4px solid var(--gold);
+  }
+  .site-header h1 {
+    font-family: 'Merriweather', serif;
+    font-size: clamp(1.1rem, 3vw, 1.7rem);
+    letter-spacing: .03em;
+    margin-bottom: 4px;
+  }
+  .site-header p {
+    font-size: .85rem;
+    opacity: .8;
+    letter-spacing: .04em;
+  }
+
+  /* ── REFERENCE GRAPHICS BAR ── */
+  .ref-bar {
+    background: var(--navy);
+    border-top: 1px solid rgba(255,255,255,.15);
+    border-bottom: 3px solid var(--blue-light);
+    padding: 14px 16px 12px;
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .ref-card {
+    background: rgba(255,255,255,.07);
+    border: 1px solid rgba(255,255,255,.18);
+    border-radius: 8px;
+    padding: 10px 14px;
+    color: white;
+    font-size: .78rem;
+    min-width: 160px;
+    flex: 1 1 160px;
+    max-width: 260px;
+  }
+  .ref-card h3 {
+    font-size: .72rem;
+    font-weight: 900;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 7px;
+    border-bottom: 1px solid rgba(255,255,255,.15);
+    padding-bottom: 5px;
+  }
+  .ref-card ul { list-style: none; line-height: 1.7; }
+  .ref-card ul li { display: flex; gap: 6px; }
+  .ref-card ul li span.tag {
+    background: var(--blue-mid);
+    border-radius: 3px;
+    padding: 0 5px;
+    font-weight: 700;
+    font-size: .72rem;
+    white-space: nowrap;
+    display: inline-flex;
+    align-items: center;
+  }
+  .ref-card .rule {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 4px;
+    font-size: .8rem;
+  }
+  .ref-card .rule .arrow { opacity: .6; }
+  .ref-card .ending {
+    font-weight: 700;
+    color: #ff9f43;
+    font-size: .85rem;
+  }
+  .ref-card .example { opacity: .75; font-style: italic; font-size: .75rem; }
+  .ref-card .irreg-list {
+    display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px;
+  }
+  .ref-card .irreg-pill {
+    background: rgba(255,255,255,.12);
+    border-radius: 4px;
+    padding: 1px 6px;
+    font-weight: 700;
+    font-size: .75rem;
+    color: #ffd89b;
+  }
+  .ref-card .pp-row {
+    display: flex; align-items: center; gap: 5px; margin-bottom: 3px;
+    font-size: .78rem;
+  }
+  .ref-card .pp-ending {
+    font-weight: 700; color: #7ed6df;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    padding: 14px 20px 0;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: .78rem; color: var(--blue-mid);
+    font-weight: 700; margin-bottom: 5px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .progress-bar-outer {
+    background: var(--gray-light);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+    border: 1px solid #cdd8e5;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-mid), var(--green-mid));
+    border-radius: 99px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+
+  /* ── MAIN ── */
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 18px 16px 40px;
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(26,58,92,.10);
+    border: 1px solid #d0dce9;
+    margin-bottom: 18px;
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .q-card:focus-within {
+    box-shadow: 0 4px 20px rgba(26,58,92,.18);
+  }
+
+  .q-header {
+    background: var(--navy);
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .q-num {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 900;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem;
+    flex-shrink: 0;
+  }
+  .q-pregunta {
+    font-family: 'Merriweather', serif;
+    font-size: .95rem;
+    flex: 1;
+  }
+  .q-pregunta em { color: #90c8f0; font-style: normal; font-weight: 700; }
+
+  .q-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .col {
+    padding: 12px 14px 14px;
+    border-right: 1px solid var(--gray-light);
+  }
+  .col:last-child { border-right: none; }
+
+  .col-label {
+    font-size: .65rem;
+    font-weight: 900;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid currentColor;
+  }
+  .col-neg .col-label  { color: var(--red);       border-color: var(--red); }
+  .col-pp  .col-label  { color: var(--green-dark); border-color: var(--green-dark); }
+  .col-aff .col-label  { color: var(--navy);       border-color: var(--navy); }
+
+  .col-neg  { background: #fff8f7; }
+  .col-pp   { background: #f5fbf7; }
+  .col-aff  { background: #f4f8fd; }
+
+  /* prefix/suffix static text */
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .prefix, .suffix {
+    font-size: .88rem;
+    color: #555;
+    white-space: nowrap;
+  }
+  .prefix { font-style: italic; }
+  .suffix { font-style: italic; }
+
+  input[type="text"] {
+    border: none;
+    border-bottom: 2px solid #b0bec5;
+    background: transparent;
+    font-family: 'Lato', sans-serif;
+    font-size: .9rem;
+    color: var(--text);
+    padding: 2px 4px;
+    outline: none;
+    width: 100%;
+    min-width: 60px;
+    transition: border-color .2s;
+    border-radius: 0;
+  }
+  input[type="text"]:focus { border-color: var(--blue-mid); }
+  input[type="text"].correct   { border-color: var(--correct); color: var(--correct); }
+  input[type="text"].incorrect { border-color: var(--incorrect); color: var(--incorrect); }
+  input[type="text"].revealed  { border-color: var(--gold); color: var(--gold); font-style: italic; }
+
+  .feedback {
+    font-size: .72rem;
+    margin-top: 4px;
+    min-height: 14px;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+  .feedback.ok  { color: var(--correct); }
+  .feedback.bad { color: var(--incorrect); }
+  .feedback.show { color: var(--gold); }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 0 6px;
+    padding: 0 16px;
+  }
+  .btn {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    letter-spacing: .04em;
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all .15s;
+    text-transform: uppercase;
+  }
+  .btn-check {
+    background: var(--navy);
+    color: white;
+  }
+  .btn-check:hover { background: var(--blue-mid); }
+  .btn-reveal {
+    background: transparent;
+    color: var(--gold);
+    border: 2px solid var(--gold);
+  }
+  .btn-reveal:hover { background: var(--gold-light); }
+  .btn-reset {
+    background: transparent;
+    color: #888;
+    border: 2px solid #ccc;
+  }
+  .btn-reset:hover { background: #f0f0f0; }
+
+  /* ── ACCENT BUTTONS ── */
+  .accent-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    padding: 6px 16px 12px;
+    justify-content: center;
+  }
+  .accent-btn {
+    background: var(--blue-pale);
+    border: 1px solid var(--blue-light);
+    color: var(--navy);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    border-radius: 5px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .accent-btn:hover { background: var(--blue-light); color: white; }
+
+  /* ── SCORE BAR ── */
+  .score-bar {
+    text-align: center;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    background: var(--blue-pale);
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid #b0cce8;
+    display: none;
+  }
+
+  /* ── MODEL ROW ── */
+  .model-box {
+    background: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: .84rem;
+  }
+  .model-box h3 {
+    font-size: .72rem;
+    font-weight: 900;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .model-cell { }
+  .model-cell .mc-label {
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #7a6200;
+    margin-bottom: 2px;
+  }
+  .model-cell .mc-val {
+    font-family: 'Merriweather', serif;
+    font-size: .82rem;
+    color: var(--text);
+  }
+  .model-cell .mc-eng {
+    font-size: .72rem;
+    color: #7a6200;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .q-body { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid var(--gray-light); }
+    .col:last-child { border-bottom: none; }
+    .model-grid { grid-template-columns: 1fr 1fr; }
+    .ref-card { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header class="site-header">
+  <h1>Mandatos Informales y Presente Perfecto</h1>
+  <p>Mandatos negativos (tú) &nbsp;·&nbsp; Presente perfecto &nbsp;·&nbsp; Mandatos afirmativos (tú)</p>
+</header>
+
+<!-- REFERENCE GRAPHICS -->
+<div class="ref-bar">
+
+  <!-- NEG TÚ -->
+  <div class="ref-card">
+    <h3>Mandatos Negativos (tú)</h3>
+    <div class="rule">
+      <span>1. Forma <strong>YO</strong> → quita la <strong>-O</strong></span>
+    </div>
+    <div class="rule">
+      <span>2. Añade el <strong>opuesto</strong>:</span>
+    </div>
+    <div class="rule" style="margin-left:8px">
+      <span class="tag">-AR</span>
+      <span class="arrow">→</span>
+      <span class="ending">-ES</span>
+      <span class="example">(no hables)</span>
+    </div>
+    <div class="rule" style="margin-left:8px">
+      <span class="tag">-ER/-IR</span>
+      <span class="arrow">→</span>
+      <span class="ending">-AS</span>
+      <span class="example">(no comas)</span>
+    </div>
+    <div style="margin-top:8px; font-size:.72rem; color: var(--gold); font-weight:700; letter-spacing:.05em; text-transform:uppercase; margin-bottom:3px;">Irregulares</div>
+    <div class="irreg-list">
+      <span class="irreg-pill">no vayas</span>
+      <span class="irreg-pill">no seas</span>
+      <span class="irreg-pill">no des</span>
+      <span class="irreg-pill">no estés</span>
+      <span class="irreg-pill">no sepas</span>
+    </div>
+  </div>
+
+  <!-- PRESENTE PERFECTO -->
+  <div class="ref-card">
+    <h3>Presente Perfecto</h3>
+    <div style="display:flex; gap:8px; margin-bottom:7px; font-size:.8rem; align-items:flex-start;">
+      <div style="line-height:1.9; font-weight:700;">
+        he<br>has<br>ha<br>
+      </div>
+      <div style="line-height:1.9; font-weight:700;">
+        hemos<br>habéis<br>han
+      </div>
+      <div style="margin-left:4px; line-height:1.9; color:#90c8f0; font-weight:700; font-size:.75rem;">
+        + participio
+      </div>
+    </div>
+    <div style="font-size:.7rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:3px;">Regulares</div>
+    <div class="pp-row"><span class="tag">-AR</span><span class="arrow">→</span><span class="pp-ending">-ado</span><span class="example">&nbsp;hablado</span></div>
+    <div class="pp-row"><span class="tag">-ER</span><span class="arrow">→</span><span class="pp-ending">-ido</span><span class="example">&nbsp;comido</span></div>
+    <div class="pp-row"><span class="tag">-IR</span><span class="arrow">→</span><span class="pp-ending">-ido</span><span class="example">&nbsp;bebido</span></div>
+    <div style="font-size:.7rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin:5px 0 3px;">Irregulares</div>
+    <div class="irreg-list">
+      <span class="irreg-pill">abrir→abierto</span>
+      <span class="irreg-pill">hacer→hecho</span>
+      <span class="irreg-pill">poner→puesto</span>
+      <span class="irreg-pill">resolver→resuelto</span>
+      <span class="irreg-pill">ver→visto</span>
+      <span class="irreg-pill">volver→vuelto</span>
+      <span class="irreg-pill">decir→dicho</span>
+      <span class="irreg-pill">escribir→escrito</span>
+      <span class="irreg-pill">morir→muerto</span>
+      <span class="irreg-pill">romper→roto</span>
+    </div>
+  </div>
+
+  <!-- AFF TÚ -->
+  <div class="ref-card">
+    <h3>Mandatos Afirmativos (tú)</h3>
+    <div style="font-size:.78rem; margin-bottom:5px;">= 3.ª persona singular (él/ella)</div>
+    <ul>
+      <li><span>hablar</span><span class="arrow" style="margin:0 4px">→</span><span style="font-weight:700; color:#7ed6df">habla</span></li>
+      <li><span>volver</span><span class="arrow" style="margin:0 4px">→</span><span style="font-weight:700; color:#7ed6df">vuelve</span></li>
+      <li><span>escribir</span><span class="arrow" style="margin:0 4px">→</span><span style="font-weight:700; color:#7ed6df">escribe</span></li>
+    </ul>
+    <div style="font-size:.7rem; color:var(--gold); font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin:7px 0 3px;">Irregulares — "Vin Diesel has 10 weapons, eh?"</div>
+    <div class="irreg-list">
+      <span class="irreg-pill">ven</span>
+      <span class="irreg-pill">di</span>
+      <span class="irreg-pill">sal</span>
+      <span class="irreg-pill">haz</span>
+      <span class="irreg-pill">ten</span>
+      <span class="irreg-pill">ve</span>
+      <span class="irreg-pill">pon</span>
+      <span class="irreg-pill">sé</span>
+    </div>
+    <div style="font-size:.72rem; margin-top:6px; opacity:.75">+ formas irregulares de YO</div>
+  </div>
+
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="prog-text">0 / 27 correctos</span>
+  </div>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="prog-bar"></div>
+  </div>
+</div>
+
+<!-- MAIN -->
+<div class="main">
+
+  <!-- ACCENT BUTTONS -->
+  <div class="accent-bar">
+    <span style="font-size:.75rem; font-weight:700; color:#888; align-self:center; text-transform:uppercase; letter-spacing:.05em;">Tildes:</span>
+    <button class="accent-btn" onclick="insertAccent('á')">á</button>
+    <button class="accent-btn" onclick="insertAccent('é')">é</button>
+    <button class="accent-btn" onclick="insertAccent('í')">í</button>
+    <button class="accent-btn" onclick="insertAccent('ó')">ó</button>
+    <button class="accent-btn" onclick="insertAccent('ú')">ú</button>
+    <button class="accent-btn" onclick="insertAccent('ñ')">ñ</button>
+    <button class="accent-btn" onclick="insertAccent('ü')">ü</button>
+  </div>
+
+  <!-- MODEL -->
+  <div class="model-box">
+    <h3>Modelo</h3>
+    <div class="model-grid">
+      <div class="model-cell">
+        <div class="mc-label">Pregunta</div>
+        <div class="mc-val">¿Debo sacar la basura?</div>
+      </div>
+      <div class="model-cell">
+        <div class="mc-label">Mandato negativo</div>
+        <div class="mc-val">No, no la saques.</div>
+        <div class="mc-eng">No, don't take it out.</div>
+      </div>
+      <div class="model-cell">
+        <div class="mc-label">Presente perfecto</div>
+        <div class="mc-val">¡Ya la he sacado!</div>
+        <div class="mc-eng">I've already taken it out.</div>
+      </div>
+      <div class="model-cell">
+        <div class="mc-label">Mandato afirmativo</div>
+        <div class="mc-val">En vez de eso barre el piso.</div>
+        <div class="mc-eng">Instead, sweep the floor.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- QUESTIONS rendered by JS -->
+  <div id="questions"></div>
+
+  <!-- GLOBAL BUTTONS -->
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✓ Revisar todo</button>
+    <button class="btn btn-reveal" onclick="revealAll()">👁 Ver respuestas</button>
+    <button class="btn btn-reset" onclick="resetAll()">↺ Reiniciar</button>
+  </div>
+
+  <div class="score-bar" id="score-bar"></div>
+
+</div>
+
+<script>
+// ─── DATA ───────────────────────────────────────────────────────────────────
+// Each item: { q, neg: {pre, ans, suf}, pp: {pre, ans, suf}, aff: {pre, ans, suf} }
+// pre/suf = static text shown outside the blank
+// ans = accepted answers (array, first is canonical)
+
+const items = [
+  {
+    q: { text: "¿Debo <em>barrer</em> el piso?", verb: "barrer", obj: "el piso" },
+    neg: { pre: "No, no lo", ans: ["barras"], suf: "." },
+    pp:  { pre: "¡Ya lo he", ans: ["barrido"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["haz"], suf: "la cama." }
+  },
+  {
+    q: { text: "¿Debo <em>hacer</em> la cama?", verb: "hacer", obj: "la cama" },
+    neg: { pre: "No, no la", ans: ["hagas"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["hecho"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["lava"], suf: "la ropa." }
+  },
+  {
+    q: { text: "¿Debo <em>lavar</em> la ropa?", verb: "lavar", obj: "la ropa" },
+    neg: { pre: "No, no la", ans: ["laves"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["lavado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["limpia"], suf: "el baño." }
+  },
+  {
+    q: { text: "¿Debo <em>limpiar</em> el baño?", verb: "limpiar", obj: "el baño" },
+    neg: { pre: "No, no lo", ans: ["limpies"], suf: "." },
+    pp:  { pre: "¡Ya lo he", ans: ["limpiado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["pasa"], suf: "la aspiradora." }
+  },
+  {
+    q: { text: "¿Debo <em>pasar</em> la aspiradora?", verb: "pasar", obj: "la aspiradora" },
+    neg: { pre: "No, no la", ans: ["pases"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["pasado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["cocina"], suf: "la cena." }
+  },
+  {
+    q: { text: "¿Debo <em>cocinar</em> la cena?", verb: "cocinar", obj: "la cena" },
+    neg: { pre: "No, no la", ans: ["cocines"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["cocinado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["ordena"], suf: "la sala." }
+  },
+  {
+    q: { text: "¿Debo <em>ordenar</em> la sala?", verb: "ordenar", obj: "la sala" },
+    neg: { pre: "No, no la", ans: ["ordenes"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["ordenado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["riega"], suf: "las plantas." }
+  },
+  {
+    q: { text: "¿Debo <em>regar</em> las plantas?", verb: "regar", obj: "las plantas" },
+    neg: { pre: "No, no las", ans: ["riegues"], suf: "." },
+    pp:  { pre: "¡Ya las he", ans: ["regado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["abre"], suf: "las ventanas." }
+  },
+  {
+    q: { text: "¿Debo <em>abrir</em> las ventanas?", verb: "abrir", obj: "las ventanas" },
+    neg: { pre: "No, no las", ans: ["abras"], suf: "." },
+    pp:  { pre: "¡Ya las he", ans: ["abierto"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["saca"], suf: "la basura." }
+  },
+];
+
+// ─── BUILD DOM ───────────────────────────────────────────────────────────────
+const container = document.getElementById('questions');
+let lastFocused = null;
+
+document.addEventListener('focusin', e => {
+  if (e.target.tagName === 'INPUT') lastFocused = e.target;
+});
+
+items.forEach((item, i) => {
+  const n = i + 1;
+  const card = document.createElement('div');
+  card.className = 'q-card';
+  card.id = `card-${n}`;
+
+  card.innerHTML = `
+    <div class="q-header">
+      <div class="q-num">${n}</div>
+      <div class="q-pregunta">${item.q.text}</div>
+    </div>
+    <div class="q-body">
+      ${makeCol('neg', n, item.neg, 'col-neg', 'Mandato negativo')}
+      ${makeCol('pp',  n, item.pp,  'col-pp',  'Presente perfecto')}
+      ${makeCol('aff', n, item.aff, 'col-aff', 'Mandato afirmativo')}
+    </div>
+  `;
+  container.appendChild(card);
+});
+
+function makeCol(type, n, data, cls, label) {
+  return `
+    <div class="col ${cls}">
+      <div class="col-label">${label}</div>
+      <div class="input-wrap">
+        <span class="prefix">${data.pre}</span>
+        <input type="text" id="inp-${type}-${n}" autocomplete="off" autocorrect="off"
+               spellcheck="false" placeholder="…"
+               onkeydown="if(event.key==='Enter')checkSingle('${type}',${n})">
+        <span class="suffix">${data.suf}</span>
+      </div>
+      <div class="feedback" id="fb-${type}-${n}"></div>
+    </div>`;
+}
+
+// ─── ACCENT INSERT ────────────────────────────────────────────────────────────
+function insertAccent(ch) {
+  const el = lastFocused;
+  if (!el || el.tagName !== 'INPUT') return;
+  const s = el.selectionStart, e = el.selectionEnd;
+  el.value = el.value.slice(0, s) + ch + el.value.slice(e);
+  el.selectionStart = el.selectionEnd = s + 1;
+  el.focus();
+}
+
+// ─── NORMALIZE ────────────────────────────────────────────────────────────────
+function norm(s) {
+  return s.trim().toLowerCase()
+    .replace(/[áà]/g,'a').replace(/[éè]/g,'e')
+    .replace(/[íì]/g,'i').replace(/[óò]/g,'o')
+    .replace(/[úù]/g,'u')
+    .replace(/[.,!¡¿?]/g,'');
+}
+
+// ─── CHECK SINGLE ─────────────────────────────────────────────────────────────
+function checkSingle(type, n) {
+  const item = items[n-1];
+  const data = item[type];
+  const inp = document.getElementById(`inp-${type}-${n}`);
+  const fb  = document.getElementById(`fb-${type}-${n}`);
+  if (inp.classList.contains('revealed')) return;
+
+  const val = inp.value;
+  if (!val.trim()) return;
+
+  const ok = data.ans.some(a => norm(val) === norm(a));
+  inp.classList.toggle('correct', ok);
+  inp.classList.toggle('incorrect', !ok);
+  if (ok) {
+    fb.textContent = '✓ ¡Correcto!';
+    fb.className = 'feedback ok';
+    inp.readOnly = true;
+  } else {
+    fb.textContent = '✗ Inténtalo de nuevo.';
+    fb.className = 'feedback bad';
+  }
+  updateProgress();
+}
+
+// ─── CHECK ALL ────────────────────────────────────────────────────────────────
+function checkAll() {
+  items.forEach((item, i) => {
+    ['neg','pp','aff'].forEach(type => checkSingle(type, i+1));
+  });
+  showScore();
+}
+
+// ─── REVEAL ALL ──────────────────────────────────────────────────────────────
+function revealAll() {
+  items.forEach((item, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      const inp = document.getElementById(`inp-${type}-${n}`);
+      const fb  = document.getElementById(`fb-${type}-${n}`);
+      if (!inp.classList.contains('correct')) {
+        inp.value = item[type].ans[0];
+        inp.className = 'revealed';
+        inp.readOnly = true;
+        fb.textContent = '→ respuesta mostrada';
+        fb.className = 'feedback show';
+      }
+    });
+  });
+  updateProgress();
+  showScore();
+}
+
+// ─── RESET ────────────────────────────────────────────────────────────────────
+function resetAll() {
+  items.forEach((_, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      const inp = document.getElementById(`inp-${type}-${n}`);
+      const fb  = document.getElementById(`fb-${type}-${n}`);
+      inp.value = '';
+      inp.className = '';
+      inp.readOnly = false;
+      fb.textContent = '';
+      fb.className = 'feedback';
+    });
+  });
+  updateProgress();
+  document.getElementById('score-bar').style.display = 'none';
+}
+
+// ─── PROGRESS ─────────────────────────────────────────────────────────────────
+function updateProgress() {
+  let correct = 0;
+  const total = items.length * 3;
+  items.forEach((_, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      const inp = document.getElementById(`inp-${type}-${n}`);
+      if (inp.classList.contains('correct')) correct++;
+    });
+  });
+  document.getElementById('prog-text').textContent = `${correct} / ${total} correctos`;
+  document.getElementById('prog-bar').style.width = `${(correct/total)*100}%`;
+}
+
+function showScore() {
+  let correct = 0, total = items.length * 3;
+  items.forEach((_, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      const inp = document.getElementById(`inp-${type}-${n}`);
+      if (inp.classList.contains('correct')) correct++;
+    });
+  });
+  const bar = document.getElementById('score-bar');
+  bar.style.display = 'block';
+  const pct = Math.round((correct/total)*100);
+  bar.textContent = `Puntuación: ${correct} / ${total} (${pct}%)`;
+}
+</script>
+</body>
+</html>
