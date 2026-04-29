@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mandatos Informales y Presente Perfecto</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&family=Merriweather:wght@400;700&display=swap');
+
+  :root {
+    --navy: #1a3a5c;
+    --blue-mid: #2e6da4;
+    --blue-light: #5b9bd5;
+    --blue-pale: #dce9f5;
+    --green-dark: #2d6a3f;
+    --green-mid: #4a9b62;
+    --gold: #c89a2e;
+    --gold-light: #f5e8c0;
+    --red: #c0392b;
+    --white: #ffffff;
+    --off-white: #f7f9fc;
+    --gray-light: #e8edf3;
+    --text: #1c2b3a;
+    --correct: #2d6a3f;
+    --incorrect: #c0392b;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Lato', sans-serif;
+    background: var(--off-white);
+    color: var(--text);
+    min-height: 100vh;
+  }
+
+  .site-header {
+    background: var(--navy);
+    color: white;
+    text-align: center;
+    padding: 22px 20px 18px;
+    border-bottom: 4px solid var(--gold);
+  }
+  .site-header h1 {
+    font-family: 'Merriweather', serif;
+    font-size: clamp(1.1rem, 3vw, 1.7rem);
+    letter-spacing: .03em;
+    margin-bottom: 4px;
+  }
+  .site-header p {
+    font-size: .85rem;
+    opacity: .8;
+    letter-spacing: .04em;
+  }
+
+  /* ── REFERENCE IMAGES BAR ── */
+  .ref-bar {
+    background: #f0f4f8;
+    border-bottom: 3px solid var(--blue-light);
+    padding: 14px 16px;
+    display: flex;
+    gap: 14px;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: flex-start;
+  }
+  .ref-img-wrap {
+    flex: 1 1 220px;
+    max-width: 340px;
+    text-align: center;
+  }
+  .ref-img-wrap img {
+    width: 100%;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 2px 10px rgba(26,58,92,.18);
+    border: 2px solid #c0d4ea;
+    display: block;
+  }
+
+  /* ── PROGRESS ── */
+  .progress-wrap {
+    padding: 14px 20px 0;
+    max-width: 860px;
+    margin: 0 auto;
+  }
+  .progress-label {
+    display: flex; justify-content: space-between;
+    font-size: .78rem; color: var(--blue-mid);
+    font-weight: 700; margin-bottom: 5px;
+    text-transform: uppercase; letter-spacing: .05em;
+  }
+  .progress-bar-outer {
+    background: var(--gray-light);
+    border-radius: 99px;
+    height: 10px;
+    overflow: hidden;
+    border: 1px solid #cdd8e5;
+  }
+  .progress-bar-inner {
+    height: 100%;
+    background: linear-gradient(90deg, var(--blue-mid), var(--green-mid));
+    border-radius: 99px;
+    transition: width .4s ease;
+    width: 0%;
+  }
+
+  .main {
+    max-width: 860px;
+    margin: 0 auto;
+    padding: 18px 16px 40px;
+  }
+
+  /* ── QUESTION CARD ── */
+  .q-card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 2px 12px rgba(26,58,92,.10);
+    border: 1px solid #d0dce9;
+    margin-bottom: 18px;
+    overflow: hidden;
+    transition: box-shadow .2s;
+  }
+  .q-card:focus-within { box-shadow: 0 4px 20px rgba(26,58,92,.18); }
+
+  .q-header {
+    background: var(--navy);
+    color: white;
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  .q-num {
+    background: var(--gold);
+    color: var(--navy);
+    font-weight: 900;
+    border-radius: 50%;
+    width: 28px; height: 28px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .9rem;
+    flex-shrink: 0;
+  }
+  .q-pregunta {
+    font-family: 'Merriweather', serif;
+    font-size: .95rem;
+    flex: 1;
+  }
+  .q-pregunta em { color: #90c8f0; font-style: normal; font-weight: 700; }
+
+  .q-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 0;
+  }
+
+  .col {
+    padding: 12px 14px 14px;
+    border-right: 1px solid var(--gray-light);
+  }
+  .col:last-child { border-right: none; }
+
+  .col-label {
+    font-size: .65rem;
+    font-weight: 900;
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    padding-bottom: 5px;
+    border-bottom: 2px solid currentColor;
+  }
+  .col-neg .col-label  { color: var(--red);       border-color: var(--red); }
+  .col-pp  .col-label  { color: var(--green-dark); border-color: var(--green-dark); }
+  .col-aff .col-label  { color: var(--navy);       border-color: var(--navy); }
+
+  .col-neg  { background: #fff8f7; }
+  .col-pp   { background: #f5fbf7; }
+  .col-aff  { background: #f4f8fd; }
+
+  .input-wrap {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-wrap: wrap;
+    margin-top: 4px;
+  }
+  .prefix, .suffix {
+    font-size: .88rem;
+    color: #555;
+    white-space: nowrap;
+    font-style: italic;
+  }
+
+  input[type="text"] {
+    border: none;
+    border-bottom: 2px solid #b0bec5;
+    background: transparent;
+    font-family: 'Lato', sans-serif;
+    font-size: .9rem;
+    color: var(--text);
+    padding: 2px 4px;
+    outline: none;
+    width: 100%;
+    min-width: 60px;
+    transition: border-color .2s;
+    border-radius: 0;
+  }
+  input[type="text"]:focus { border-color: var(--blue-mid); }
+  input[type="text"].correct   { border-color: var(--correct); color: var(--correct); }
+  input[type="text"].incorrect { border-color: var(--incorrect); color: var(--incorrect); }
+  input[type="text"].revealed  { border-color: var(--gold); color: var(--gold); font-style: italic; }
+
+  .feedback {
+    font-size: .72rem;
+    margin-top: 4px;
+    min-height: 14px;
+    font-weight: 700;
+    letter-spacing: .03em;
+  }
+  .feedback.ok   { color: var(--correct); }
+  .feedback.bad  { color: var(--incorrect); }
+  .feedback.show { color: var(--gold); }
+
+  /* ── BUTTONS ── */
+  .btn-row {
+    display: flex; gap: 10px; flex-wrap: wrap;
+    justify-content: center;
+    margin: 10px 0 6px;
+    padding: 0 16px;
+  }
+  .btn {
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: .82rem;
+    letter-spacing: .04em;
+    padding: 8px 20px;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: all .15s;
+    text-transform: uppercase;
+  }
+  .btn-check  { background: var(--navy); color: white; }
+  .btn-check:hover { background: var(--blue-mid); }
+  .btn-reveal { background: transparent; color: var(--gold); border: 2px solid var(--gold); }
+  .btn-reveal:hover { background: var(--gold-light); }
+  .btn-reset  { background: transparent; color: #888; border: 2px solid #ccc; }
+  .btn-reset:hover { background: #f0f0f0; }
+
+  /* ── ACCENT BUTTONS ── */
+  .accent-bar {
+    display: flex; gap: 6px; flex-wrap: wrap;
+    padding: 6px 16px 12px;
+    justify-content: center;
+  }
+  .accent-btn {
+    background: var(--blue-pale);
+    border: 1px solid var(--blue-light);
+    color: var(--navy);
+    font-family: 'Lato', sans-serif;
+    font-weight: 700;
+    font-size: .9rem;
+    border-radius: 5px;
+    padding: 3px 10px;
+    cursor: pointer;
+    transition: background .15s;
+  }
+  .accent-btn:hover { background: var(--blue-light); color: white; }
+
+  /* ── SCORE BAR ── */
+  .score-bar {
+    text-align: center;
+    padding: 16px;
+    font-size: 1rem;
+    font-weight: 700;
+    color: var(--navy);
+    background: var(--blue-pale);
+    border-radius: 10px;
+    margin-top: 10px;
+    border: 1px solid #b0cce8;
+    display: none;
+  }
+
+  /* ── MODEL ── */
+  .model-box {
+    background: var(--gold-light);
+    border: 1px solid var(--gold);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 18px;
+    font-size: .84rem;
+  }
+  .model-box h3 {
+    font-size: .72rem;
+    font-weight: 900;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 6px;
+  }
+  .model-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 8px;
+  }
+  .model-cell .mc-label {
+    font-size: .65rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: #7a6200;
+    margin-bottom: 2px;
+  }
+  .model-cell .mc-val {
+    font-family: 'Merriweather', serif;
+    font-size: .82rem;
+    color: var(--text);
+  }
+  .model-cell .mc-eng {
+    font-size: .72rem;
+    color: #7a6200;
+    font-style: italic;
+  }
+
+  @media (max-width: 600px) {
+    .q-body { grid-template-columns: 1fr; }
+    .col { border-right: none; border-bottom: 1px solid var(--gray-light); }
+    .col:last-child { border-bottom: none; }
+    .model-grid { grid-template-columns: 1fr 1fr; }
+    .ref-img-wrap { max-width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header class="site-header">
+  <h1>Mandatos Informales y Presente Perfecto</h1>
+  <p>Mandatos negativos (tú) &nbsp;·&nbsp; Presente perfecto &nbsp;·&nbsp; Mandatos afirmativos (tú)</p>
+</header>
+
+<!-- REFERENCE IMAGES -->
+<div class="ref-bar">
+  <div class="ref-img-wrap">
+    <img src="Tú_NEGATIVE_Commands__Mandatos_negativos_informales_.png" alt="Mandatos negativos (tú)">
+  </div>
+  <div class="ref-img-wrap">
+    <img src="Present_Perfect.png" alt="Present Perfect / Presente perfecto">
+  </div>
+  <div class="ref-img-wrap">
+    <img src="Tú_AFFIRMATIVE_Commands__Mandatos_afirmativos_informales_.png" alt="Mandatos afirmativos (tú)">
+  </div>
+</div>
+
+<!-- PROGRESS -->
+<div class="progress-wrap">
+  <div class="progress-label">
+    <span>Progreso</span>
+    <span id="prog-text">0 / 27 correctos</span>
+  </div>
+  <div class="progress-bar-outer">
+    <div class="progress-bar-inner" id="prog-bar"></div>
+  </div>
+</div>
+
+<div class="main">
+
+  <div class="accent-bar">
+    <span style="font-size:.75rem; font-weight:700; color:#888; align-self:center; text-transform:uppercase; letter-spacing:.05em;">Tildes:</span>
+    <button class="accent-btn" onclick="insertAccent('á')">á</button>
+    <button class="accent-btn" onclick="insertAccent('é')">é</button>
+    <button class="accent-btn" onclick="insertAccent('í')">í</button>
+    <button class="accent-btn" onclick="insertAccent('ó')">ó</button>
+    <button class="accent-btn" onclick="insertAccent('ú')">ú</button>
+    <button class="accent-btn" onclick="insertAccent('ñ')">ñ</button>
+    <button class="accent-btn" onclick="insertAccent('ü')">ü</button>
+  </div>
+
+  <div class="model-box">
+    <h3>Modelo</h3>
+    <div class="model-grid">
+      <div class="model-cell">
+        <div class="mc-label">Pregunta</div>
+        <div class="mc-val">¿Debo sacar la basura?</div>
+      </div>
+      <div class="model-cell">
+        <div class="mc-label">Mandato negativo</div>
+        <div class="mc-val">No, no la saques.</div>
+        <div class="mc-eng">No, don't take it out.</div>
+      </div>
+      <div class="model-cell">
+        <div class="mc-label">Presente perfecto</div>
+        <div class="mc-val">¡Ya la he sacado!</div>
+        <div class="mc-eng">I've already taken it out.</div>
+      </div>
+      <div class="model-cell">
+        <div class="mc-label">Mandato afirmativo</div>
+        <div class="mc-val">En vez de eso barre el piso.</div>
+        <div class="mc-eng">Instead, sweep the floor.</div>
+      </div>
+    </div>
+  </div>
+
+  <div id="questions"></div>
+
+  <div class="btn-row">
+    <button class="btn btn-check" onclick="checkAll()">✓ Revisar todo</button>
+    <button class="btn btn-reveal" onclick="revealAll()">👁 Ver respuestas</button>
+    <button class="btn btn-reset" onclick="resetAll()">↺ Reiniciar</button>
+  </div>
+
+  <div class="score-bar" id="score-bar"></div>
+
+</div>
+
+<script>
+const items = [
+  {
+    q: "¿Debo <em>barrer</em> el piso?",
+    neg: { pre: "No, no lo", ans: ["barras"], suf: "." },
+    pp:  { pre: "¡Ya lo he", ans: ["barrido"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["haz"], suf: "la cama." }
+  },
+  {
+    q: "¿Debo <em>hacer</em> la cama?",
+    neg: { pre: "No, no la", ans: ["hagas"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["hecho"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["lava"], suf: "la ropa." }
+  },
+  {
+    q: "¿Debo <em>lavar</em> la ropa?",
+    neg: { pre: "No, no la", ans: ["laves"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["lavado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["limpia"], suf: "el baño." }
+  },
+  {
+    q: "¿Debo <em>limpiar</em> el baño?",
+    neg: { pre: "No, no lo", ans: ["limpies"], suf: "." },
+    pp:  { pre: "¡Ya lo he", ans: ["limpiado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["pasa"], suf: "la aspiradora." }
+  },
+  {
+    q: "¿Debo <em>pasar</em> la aspiradora?",
+    neg: { pre: "No, no la", ans: ["pases"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["pasado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["cocina"], suf: "la cena." }
+  },
+  {
+    q: "¿Debo <em>cocinar</em> la cena?",
+    neg: { pre: "No, no la", ans: ["cocines"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["cocinado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["ordena"], suf: "la sala." }
+  },
+  {
+    q: "¿Debo <em>ordenar</em> la sala?",
+    neg: { pre: "No, no la", ans: ["ordenes"], suf: "." },
+    pp:  { pre: "¡Ya la he", ans: ["ordenado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["riega"], suf: "las plantas." }
+  },
+  {
+    q: "¿Debo <em>regar</em> las plantas?",
+    neg: { pre: "No, no las", ans: ["riegues"], suf: "." },
+    pp:  { pre: "¡Ya las he", ans: ["regado"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["abre"], suf: "las ventanas." }
+  },
+  {
+    q: "¿Debo <em>abrir</em> las ventanas?",
+    neg: { pre: "No, no las", ans: ["abras"], suf: "." },
+    pp:  { pre: "¡Ya las he", ans: ["abierto"], suf: "!" },
+    aff: { pre: "En vez de eso", ans: ["saca"], suf: "la basura." }
+  },
+];
+
+const container = document.getElementById('questions');
+let lastFocused = null;
+document.addEventListener('focusin', e => { if (e.target.tagName === 'INPUT') lastFocused = e.target; });
+
+items.forEach((item, i) => {
+  const n = i + 1;
+  const card = document.createElement('div');
+  card.className = 'q-card';
+  card.id = `card-${n}`;
+  card.innerHTML = `
+    <div class="q-header">
+      <div class="q-num">${n}</div>
+      <div class="q-pregunta">${item.q}</div>
+    </div>
+    <div class="q-body">
+      ${col('neg', n, item.neg, 'col-neg', 'Mandato negativo')}
+      ${col('pp',  n, item.pp,  'col-pp',  'Presente perfecto')}
+      ${col('aff', n, item.aff, 'col-aff', 'Mandato afirmativo')}
+    </div>`;
+  container.appendChild(card);
+});
+
+function col(type, n, data, cls, label) {
+  return `<div class="col ${cls}">
+    <div class="col-label">${label}</div>
+    <div class="input-wrap">
+      <span class="prefix">${data.pre}</span>
+      <input type="text" id="inp-${type}-${n}" autocomplete="off" autocorrect="off" spellcheck="false" placeholder="…"
+             onkeydown="if(event.key==='Enter')checkSingle('${type}',${n})">
+      <span class="suffix">${data.suf}</span>
+    </div>
+    <div class="feedback" id="fb-${type}-${n}"></div>
+  </div>`;
+}
+
+function insertAccent(ch) {
+  const el = lastFocused;
+  if (!el || el.tagName !== 'INPUT') return;
+  const s = el.selectionStart, e = el.selectionEnd;
+  el.value = el.value.slice(0, s) + ch + el.value.slice(e);
+  el.selectionStart = el.selectionEnd = s + 1;
+  el.focus();
+}
+
+function norm(s) {
+  return s.trim().toLowerCase()
+    .replace(/[áà]/g,'a').replace(/[éè]/g,'e')
+    .replace(/[íì]/g,'i').replace(/[óò]/g,'o')
+    .replace(/[úù]/g,'u').replace(/[.,!¡¿?]/g,'');
+}
+
+function checkSingle(type, n) {
+  const data = items[n-1][type];
+  const inp = document.getElementById(`inp-${type}-${n}`);
+  const fb  = document.getElementById(`fb-${type}-${n}`);
+  if (inp.classList.contains('revealed') || inp.classList.contains('correct')) return;
+  if (!inp.value.trim()) return;
+  const ok = data.ans.some(a => norm(inp.value) === norm(a));
+  inp.classList.toggle('correct', ok);
+  inp.classList.toggle('incorrect', !ok);
+  if (ok) { fb.textContent = '✓ ¡Correcto!'; fb.className = 'feedback ok'; inp.readOnly = true; }
+  else     { fb.textContent = '✗ Inténtalo de nuevo.'; fb.className = 'feedback bad'; }
+  updateProgress();
+}
+
+function checkAll() {
+  items.forEach((_, i) => ['neg','pp','aff'].forEach(t => checkSingle(t, i+1)));
+  showScore();
+}
+
+function revealAll() {
+  items.forEach((item, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      const inp = document.getElementById(`inp-${type}-${n}`);
+      const fb  = document.getElementById(`fb-${type}-${n}`);
+      if (!inp.classList.contains('correct')) {
+        inp.value = item[type].ans[0];
+        inp.className = 'revealed'; inp.readOnly = true;
+        fb.textContent = '→ respuesta mostrada'; fb.className = 'feedback show';
+      }
+    });
+  });
+  updateProgress(); showScore();
+}
+
+function resetAll() {
+  items.forEach((_, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      const inp = document.getElementById(`inp-${type}-${n}`);
+      const fb  = document.getElementById(`fb-${type}-${n}`);
+      inp.value = ''; inp.className = ''; inp.readOnly = false;
+      fb.textContent = ''; fb.className = 'feedback';
+    });
+  });
+  updateProgress();
+  document.getElementById('score-bar').style.display = 'none';
+}
+
+function updateProgress() {
+  let correct = 0, total = items.length * 3;
+  items.forEach((_, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      if (document.getElementById(`inp-${type}-${n}`).classList.contains('correct')) correct++;
+    });
+  });
+  document.getElementById('prog-text').textContent = `${correct} / ${total} correctos`;
+  document.getElementById('prog-bar').style.width = `${(correct/total)*100}%`;
+}
+
+function showScore() {
+  let correct = 0, total = items.length * 3;
+  items.forEach((_, i) => {
+    const n = i+1;
+    ['neg','pp','aff'].forEach(type => {
+      if (document.getElementById(`inp-${type}-${n}`).classList.contains('correct')) correct++;
+    });
+  });
+  const bar = document.getElementById('score-bar');
+  bar.style.display = 'block';
+  bar.textContent = `Puntuación: ${correct} / ${total} (${Math.round(correct/total*100)}%)`;
+}
+</script>
+</body>
+</html>
